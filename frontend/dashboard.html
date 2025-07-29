@@ -1,0 +1,96 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Whisper – Dashboard</title>
+  <link rel="stylesheet" href="css/styles.css">
+  <!-- Chart.js -->
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+</head>
+<body>
+  <div class="container">
+    <h1>แผงควบคุม Whisper</h1>
+    <p id="welcomeMsg"></p>
+    <button id="logoutBtn" class="btn-secondary" style="float:right;">ออกจากระบบ</button>
+    <!-- Tab navigation -->
+    <div class="tab-nav">
+      <button data-tab="mood" class="btn-secondary active">กราฟอารมณ์</button>
+      <button data-tab="calendar" class="btn-secondary">ปฏิทิน</button>
+      <button data-tab="notes" class="btn-secondary">โน้ต</button>
+      <button data-tab="encourage" class="btn-secondary">กำลังใจ</button>
+    </div>
+    <!-- Mood section -->
+    <div id="section-mood" class="section active">
+      <h2>บันทึกอารมณ์</h2>
+      <div>
+        <label>เลือกอารมณ์</label>
+        <select id="moodSelect">
+          <option value="😊">😊 มีความสุข</option>
+          <option value="😐">😐 ปกติ</option>
+          <option value="😢">😢 เศร้า</option>
+          <option value="😰">😰 เครียด</option>
+          <option value="😠">😠 โกรธ</option>
+        </select>
+        <label>ข้อความ (ไม่จำเป็น)</label>
+        <textarea id="moodText" rows="3" placeholder="ระบายเพิ่มเติมถ้าต้องการ..."></textarea>
+        <button id="saveMoodBtn" class="btn-primary">บันทึกอารมณ์</button>
+        <div id="moodMsg" class="alert"></div>
+      </div>
+      <div id="moodChartContainer">
+        <canvas id="moodChart"></canvas>
+      </div>
+    </div>
+    <!-- Calendar section -->
+    <div id="section-calendar" class="section">
+      <h2>ปฏิทิน</h2>
+      <div id="calendarNav" style="display:flex;justify-content:space-between;align-items:center;margin-bottom:1rem;">
+        <button id="prevMonth" class="btn-secondary">&lt;</button>
+        <h3 id="calendarTitle"></h3>
+        <button id="nextMonth" class="btn-secondary">&gt;</button>
+      </div>
+      <div class="calendar" id="calendarGrid"></div>
+      <h3 style="margin-top:1rem;">เพิ่มกิจกรรม</h3>
+      <label>ชื่อกิจกรรม</label>
+      <input type="text" id="taskTitle" placeholder="เช่น ทำการบ้าน">
+      <label>วันที่</label>
+      <input type="date" id="taskDate">
+      <label>หมายเหตุ (ไม่จำเป็น)</label>
+      <input type="text" id="taskNote" placeholder="รายละเอียดเพิ่มเติม">
+      <button id="saveTaskBtn" class="btn-primary">บันทึกงาน/เดดไลน์</button>
+      <div id="taskMsg" class="alert"></div>
+    </div>
+    <!-- Notes section -->
+    <div id="section-notes" class="section">
+      <h2>โน้ต</h2>
+      <label>เลือกอารมณ์</label>
+      <select id="noteMoodSelect">
+        <option value="😊">😊 มีความสุข</option>
+        <option value="😐">😐 ปกติ</option>
+        <option value="😢">😢 เศร้า</option>
+        <option value="😰">😰 เครียด</option>
+        <option value="😠">😠 โกรธ</option>
+      </select>
+      <label>ข้อความ</label>
+      <textarea id="noteText" rows="3" placeholder="เขียนโน้ต..."></textarea>
+      <button id="saveNoteBtn" class="btn-primary">บันทึกโน้ต</button>
+      <div id="noteMsg" class="alert"></div>
+      <h3 style="margin-top:1rem;">รายการโน้ตของคุณ</h3>
+      <div id="notesList"></div>
+    </div>
+    <!-- Encouragement section -->
+    <div id="section-encourage" class="section">
+      <h2>กำลังใจ</h2>
+      <label>เขียนข้อความกำลังใจ</label>
+      <textarea id="encourageText" rows="3" placeholder="ส่งกำลังใจให้ใครสักคน..."></textarea>
+      <button id="sendEncourageBtn" class="btn-primary">ส่งกำลังใจ</button>
+      <div id="encourageMsg" class="alert"></div>
+      <button id="getRandomEncourageBtn" class="btn-secondary" style="margin-top:1rem;">รับข้อความสุ่ม</button>
+      <div id="randomEncourageDisplay" style="margin-top:1rem;"></div>
+      <h3 style="margin-top:1rem;">ข้อความกำลังใจล่าสุด</h3>
+      <div id="encourageList" class="encouragement-list"></div>
+    </div>
+  </div>
+  <script src="js/dashboard.js"></script>
+</body>
+</html>
