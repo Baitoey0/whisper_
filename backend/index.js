@@ -126,7 +126,7 @@ async function handleRequest(req, res) {
     if (await usersCol.findOne({ username })) return sendJSON(res, 400, { error: 'Username already exists' }, allowedOrigin);
     const hash = await bcrypt.hash(password, 10);
     const result = await usersCol.insertOne({ username, passwordHash: hash });
-    return sendJSON(res, 200, { success: true, userId: result.insertedId.toString(), username });
+    return sendJSON(res, 200, { success: true, userId: result.insertedId.toString(), username }, allowedOrigin);
   }
 
   if (pathname === '/login' && req.method === 'POST') {
