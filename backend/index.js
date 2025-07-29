@@ -59,7 +59,7 @@ async function initDatabase() {
   console.log('Connected to MongoDB');
 }
 
-function sendJSON(res, statusCode, obj, allowedOrigin, origin = '*') {
+function sendJSON(res, statusCode, obj, origin = '*') {
   res.writeHead(statusCode, {
     'Content-Type': 'application/json',
     'Access-Control-Allow-Credentials': 'true',
@@ -110,7 +110,7 @@ async function handleRequest(req, res) {
   const parsed = url.parse(req.url, true);
   const pathname = parsed.pathname;
 
-  const allowedOrigin = 'https://ชื่อเว็บของคุณ.onrender.com';
+  const allowedOrigin = 'https://whisper-1uoc.onrender.com';
 
   res.writeHead(204, {
     'Access-Control-Allow-Origin': allowedOrigin,
@@ -122,8 +122,8 @@ async function handleRequest(req, res) {
 
   if (pathname === '/register' && req.method === 'POST') {
     const { username, password } = await parseBody(req);
-    if (!username || !password) return sendJSON(res, 400, { error: 'Username and password are required' });
-    if (await usersCol.findOne({ username })) return sendJSON(res, 400, { error: 'Username already exists' });
+    if (!username || !password) return sendJSON(res, 400, { error: 'Username and password are required' }, allowedOrigin);
+    if (await usersCol.findOne({ username })) return sendJSON(res, 400, { error: 'Username already exists' }, allowedOrigin);
     const hash = await bcrypt.hash(password, 10);
     const result = await usersCol.insertOne({ username, passwordHash: hash });
     return sendJSON(res, 200, { success: true, userId: result.insertedId.toString(), username });
@@ -133,7 +133,7 @@ async function handleRequest(req, res) {
     const { username, password } = await parseBody(req);
     const user = await usersCol.findOne({ username });
     if (!user || !(await bcrypt.compare(password, user.passwordHash))) {
-      return sendJSON(res, 400, { error: 'Invalid credentials' });
+      return sendJSON(res, 400, { error: 'Invalid credentials' }, allowedOrigin);
     }
     res.writeHead(200, {
       'Content-Type': 'application/json',
@@ -151,76 +151,76 @@ async function handleRequest(req, res) {
       try {
         const user = await usersCol.findOne({ _id: new ObjectId(userId) });
         if (user) {
-          return sendJSON(res, 200, { user: { username: user.username, userId: user._id.toString() } });
+          return sendJSON(res, 200, { user: { username: user.username, userId: user._id.toString() } }, allowedOrigin);
         }
       } catch (err) {
-        return sendJSON(res, 400, { error: 'Invalid userId' });
+        return sendJSON(res, 400, { error: 'Invalid userId' }, allowedOrigin);
       }
     }
-    return sendJSON(res, 200, { user: null });
+    return sendJSON(res, 200, { user: null }, allowedOrigin);
   }
 
   if (pathname === '/submit-mood' && req.method === 'POST') {
     const { userId, mood, text } = await parseBody(req);
-    if (!userId || !mood) return sendJSON(res, 400, { error: 'userId and mood are required' });
+    if (!userId || !mood) return sendJSON(res, 400, { error: 'userId and mood are required' }, allowedOrigin);
     await moodsCol.insertOne({ userId: new ObjectId(userId), mood, text: text || '', timestamp: new Date().toISOString() });
-    return sendJSON(res, 200, { success: true });
+    return sendJSON(res, 200, { success: true }, allowedOrigin);
   }
 
   if (pathname === '/submit-journal' && req.method === 'POST') {
     const { userId, mood, text } = await parseBody(req);
-    if (!userId || !mood || !text) return sendJSON(res, 400, { error: 'userId, mood and text are required' });
+    if (!userId || !mood || !text) return sendJSON(res, 400, { error: 'userId, mood and text are required' }, allowedOrigin);
     await journalsCol.insertOne({ userId: new ObjectId(userId), mood, text: text.trim(), timestamp: new Date().toISOString() });
-    return sendJSON(res, 200, { success: true });
+    return sendJSON(res, 200, { success: true }, allowedOrigin);
   }
 
   if (pathname === '/submit-event' && req.method === 'POST') {
     const { userId, title, date, note } = await parseBody(req);
-    if (!userId || !title || !date) return sendJSON(res, 400, { error: 'userId, title and date are required' });
+    if (!userId || !title || !date) return sendJSON(res, 400, { error: 'userId, title and date are required' }, allowedOrigin);
     await eventsCol.insertOne({ userId: new ObjectId(userId), title, date, note: note || '' });
-    return sendJSON(res, 200, { success: true });
+    return sendJSON(res, 200, { success: true }, allowedOrigin);
   }
 
   if (pathname === '/api/tasks' && req.method === 'POST') {
     const { userId, title, date, note, id } = await parseBody(req);
     if (!userId || !title || !date) return sendJSON(res, 400, { error: 'userId, title and date are required' });
-    if (id) {
+    if (id) {, allowedOrigin
       await eventsCol.updateOne({ _id: new ObjectId(id), userId: new ObjectId(userId) }, { $set: { title, date, note: note || '' } });
     } else {
       await eventsCol.insertOne({ userId: new ObjectId(userId), title, date, note: note || '' });
     }
-    return sendJSON(res, 200, { success: true });
+    return sendJSON(res, 200, { success: true }, allowedOrigin);
   }
 
   if (pathname.startsWith('/api/tasks/') && req.method === 'DELETE') {
     const id = pathname.split('/').pop();
     try {
       await eventsCol.deleteOne({ _id: new ObjectId(id) });
-      return sendJSON(res, 200, { success: true });
+      return sendJSON(res, 200, { success: true }, allowedOrigin);
     } catch {
-      return sendJSON(res, 400, { error: 'Invalid id' });
+      return sendJSON(res, 400, { error: 'Invalid id' }, allowedOrigin);
     }
   }
 
   if (pathname === '/api/moods' && req.method === 'GET') {
     const { userId } = parsed.query;
-    if (!userId) return sendJSON(res, 400, { error: 'userId is required' });
+    if (!userId) return sendJSON(res, 400, { error: 'userId is required' }, allowedOrigin);
     const moods = await moodsCol.find({ userId: new ObjectId(userId) }).toArray();
-    return sendJSON(res, 200, moods.map(m => ({ id: m._id.toString(), mood: m.mood, text: m.text, timestamp: m.timestamp })));
+    return sendJSON(res, 200, moods.map(m => ({ id: m._id.toString(), mood: m.mood, text: m.text, timestamp: m.timestamp })), allowedOrigin);
   }
 
   if (pathname === '/api/notes' && req.method === 'GET') {
     const { userId } = parsed.query;
-    if (!userId) return sendJSON(res, 400, { error: 'userId is required' });
+    if (!userId) return sendJSON(res, 400, { error: 'userId is required' }, allowedOrigin);
     const notes = await journalsCol.find({ userId: new ObjectId(userId) }).toArray();
-    return sendJSON(res, 200, notes.map(n => ({ id: n._id.toString(), mood: n.mood, text: n.text, timestamp: n.timestamp })));
+    return sendJSON(res, 200, notes.map(n => ({ id: n._id.toString(), mood: n.mood, text: n.text, timestamp: n.timestamp })), allowedOrigin);
   }
 
   if (pathname === '/api/tasks' && req.method === 'GET') {
     const { userId } = parsed.query;
-    if (!userId) return sendJSON(res, 400, { error: 'userId is required' });
+    if (!userId) return sendJSON(res, 400, { error: 'userId is required' }, allowedOrigin);
     const events = await eventsCol.find({ userId: new ObjectId(userId) }).toArray();
-    return sendJSON(res, 200, events.map(e => ({ id: e._id.toString(), title: e.title, date: e.date, note: e.note })));
+    return sendJSON(res, 200, events.map(e => ({ id: e._id.toString(), title: e.title, date: e.date, note: e.note })), allowedOrigin);
   }
 
   // Create a new encouragement message.  These messages are stored in a
@@ -229,10 +229,10 @@ async function handleRequest(req, res) {
   if (pathname === '/api/encouragements' && req.method === 'POST') {
     const { userId, text } = await parseBody(req);
     if (!text || text.trim() === '') {
-      return sendJSON(res, 400, { error: 'text is required' });
+      return sendJSON(res, 400, { error: 'text is required' }, allowedOrigin);
     }
     await encouragementsCol.insertOne({ text: text.trim(), userId: userId ? new ObjectId(userId) : null, timestamp: new Date().toISOString() });
-    return sendJSON(res, 200, { success: true });
+    return sendJSON(res, 200, { success: true }, allowedOrigin);
   }
 
   // Retrieve a random encouragement message.  Chooses a random document
@@ -240,36 +240,36 @@ async function handleRequest(req, res) {
   if (pathname === '/api/encouragements/random' && req.method === 'GET') {
     const msgs = await encouragementsCol.aggregate([{ $sample: { size: 1 } }]).toArray();
     if (msgs.length === 0) {
-      return sendJSON(res, 200, null);
+      return sendJSON(res, 200, null, allowedOrigin);
     }
     const msg = msgs[0];
-    return sendJSON(res, 200, { id: msg._id.toString(), text: msg.text });
+    return sendJSON(res, 200, { id: msg._id.toString(), text: msg.text }, allowedOrigin);
   }
 
   // Save an encouragement for a specific user.  Stores the message text
   // along with the userId and a liked flag (default false).
   if (pathname === '/api/saved-encouragements' && req.method === 'POST') {
     const { userId, text } = await parseBody(req);
-    if (!userId || !text) return sendJSON(res, 400, { error: 'userId and text are required' });
+    if (!userId || !text) return sendJSON(res, 400, { error: 'userId and text are required' }, allowedOrigin);
     const result = await savedEncouragementsCol.insertOne({ userId: new ObjectId(userId), text: text.trim(), liked: false, timestamp: new Date().toISOString() });
-    return sendJSON(res, 200, { success: true, id: result.insertedId.toString() });
+    return sendJSON(res, 200, { success: true, id: result.insertedId.toString() }, allowedOrigin);
   }
 
   // Get all saved encouragements for a user
   if (pathname === '/api/saved-encouragements' && req.method === 'GET') {
     const { userId } = parsed.query;
-    if (!userId) return sendJSON(res, 400, { error: 'userId is required' });
+    if (!userId) return sendJSON(res, 400, { error: 'userId is required' }, allowedOrigin);
     const items = await savedEncouragementsCol.find({ userId: new ObjectId(userId) }).toArray();
-    return sendJSON(res, 200, items.map(e => ({ id: e._id.toString(), text: e.text, liked: !!e.liked, timestamp: e.timestamp })));
+    return sendJSON(res, 200, items.map(e => ({ id: e._id.toString(), text: e.text, liked: !!e.liked, timestamp: e.timestamp })), allowedOrigin);
   }
 
   // Update liked flag of a saved encouragement (toggle like).  Expects
   // JSON body with id and liked boolean.
   if (pathname === '/api/saved-encouragements/like' && req.method === 'POST') {
     const { id, liked } = await parseBody(req);
-    if (!id || typeof liked !== 'boolean') return sendJSON(res, 400, { error: 'id and liked are required' });
+    if (!id || typeof liked !== 'boolean') return sendJSON(res, 400, { error: 'id and liked are required' }, allowedOrigin);
     await savedEncouragementsCol.updateOne({ _id: new ObjectId(id) }, { $set: { liked } });
-    return sendJSON(res, 200, { success: true });
+    return sendJSON(res, 200, { success: true }, allowedOrigin);
   }
 
   // Delete a saved encouragement by id
@@ -277,9 +277,9 @@ async function handleRequest(req, res) {
     const id = pathname.split('/').pop();
     try {
       await savedEncouragementsCol.deleteOne({ _id: new ObjectId(id) });
-      return sendJSON(res, 200, { success: true });
+      return sendJSON(res, 200, { success: true }, allowedOrigin);
     } catch {
-      return sendJSON(res, 400, { error: 'Invalid id' });
+      return sendJSON(res, 400, { error: 'Invalid id' }, allowedOrigin);
     }
   }
 
