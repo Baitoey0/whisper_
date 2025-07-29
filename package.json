@@ -6,5 +6,9 @@
   "scripts": {
     "start": "node backend/index.js"
   },
-  "dependencies": {}
+  "dependencies": {
+    "mongodb": "^5.8.0",
+    "bcrypt": "^5.1.0",
+    "dotenv": "^16.4.5"
+  }
 }
