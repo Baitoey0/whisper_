@@ -1,3 +1,4 @@
+// Updated Node.js backend with cookie-based login and /api/me support
 const http = require('http');
 const url = require('url');
 const fs = require('fs');
@@ -30,7 +31,10 @@ async function initDatabase() {
 }
 
 function sendJSON(res, statusCode, obj) {
-  res.writeHead(statusCode, { 'Content-Type': 'application/json' });
+  res.writeHead(statusCode, {
+    'Content-Type': 'application/json',
+    'Access-Control-Allow-Credentials': 'true'
+  });
   res.end(JSON.stringify(obj));
 }
 
@@ -61,14 +65,9 @@ function serveStatic(req, res, pathname) {
     }
     const ext = path.extname(filePath).toLowerCase();
     const mimeTypes = {
-      '.html': 'text/html',
-      '.css': 'text/css',
-      '.js': 'application/javascript',
-      '.json': 'application/json',
-      '.png': 'image/png',
-      '.jpg': 'image/jpeg',
-      '.svg': 'image/svg+xml',
-      '.ico': 'image/x-icon'
+      '.html': 'text/html', '.css': 'text/css', '.js': 'application/javascript',
+      '.json': 'application/json', '.png': 'image/png', '.jpg': 'image/jpeg',
+      '.svg': 'image/svg+xml', '.ico': 'image/x-icon'
     };
     const mime = mimeTypes[ext] || 'application/octet-stream';
     res.writeHead(200, { 'Content-Type': mime });
@@ -79,6 +78,17 @@ function serveStatic(req, res, pathname) {
 async function handleRequest(req, res) {
   const parsed = url.parse(req.url, true);
   const pathname = parsed.pathname;
+
+  if (req.method === 'OPTIONS') {
+    res.writeHead(204, {
+      'Access-Control-Allow-Origin': req.headers.origin || '*',
+      'Access-Control-Allow-Methods': 'GET, POST, DELETE, OPTIONS',
+      'Access-Control-Allow-Headers': 'Content-Type',
+      'Access-Control-Allow-Credentials': 'true'
+    });
+    res.end();
+    return;
+  }
 
   if (pathname === '/register' && req.method === 'POST') {
     const { username, password } = await parseBody(req);
@@ -95,15 +105,30 @@ async function handleRequest(req, res) {
     if (!user || !(await bcrypt.compare(password, user.passwordHash))) {
       return sendJSON(res, 400, { error: 'Invalid credentials' });
     }
+    res.writeHead(200, {
+      'Content-Type': 'application/json',
+      'Set-Cookie': `userId=${user._id.toString()}; Path=/; HttpOnly; SameSite=Lax`,
+      'Access-Control-Allow-Credentials': 'true'
+    });
+    res.end(JSON.stringify({ success: true, username }));
+    return;
+  }
 
-  res.writeHead(200, {
-    'Content-Type': 'application/json',
-    'Set-Cookie': `userId=${user._id.toString()}; Path=/; HttpOnly`
-  });
-  res.end(JSON.stringify({ success: true, username }));
-  return;
-}
-
+  if (pathname === '/api/me' && req.method === 'GET') {
+    const cookies = req.headers.cookie || '';
+    const userId = cookies.split(';').find(c => c.trim().startsWith('userId='))?.split('=')[1];
+    if (userId) {
+      try {
+        const user = await usersCol.findOne({ _id: new ObjectId(userId) });
+        if (user) {
+          return sendJSON(res, 200, { user: { username: user.username, userId: user._id.toString() } });
+        }
+      } catch (err) {
+        return sendJSON(res, 400, { error: 'Invalid userId' });
+      }
+    }
+    return sendJSON(res, 200, { user: null });
+  }
 
   if (pathname === '/submit-mood' && req.method === 'POST') {
     const { userId, mood, text } = await parseBody(req);
@@ -168,30 +193,10 @@ async function handleRequest(req, res) {
     return sendJSON(res, 200, events.map(e => ({ id: e._id.toString(), title: e.title, date: e.date, note: e.note })));
   }
 
-  if (pathname === '/api/me' && req.method === 'GET') {
-  const cookies = req.headers.cookie || '';
-  const userId = cookies.split(';').find(c => c.trim().startsWith('userId='))?.split('=')[1];
-
-  if (userId) {
-    try {
-      const user = await usersCol.findOne({ _id: new ObjectId(userId) });
-      if (user) {
-        return sendJSON(res, 200, { user: { username: user.username, userId: user._id.toString() } });
-      }
-    } catch (err) {
-      return sendJSON(res, 400, { error: 'Invalid userId' });
-    }
-  }
-
-  return sendJSON(res, 200, { user: null });
-}
-
-
   // Default: serve frontend
   serveStatic(req, res, pathname.replace(/^\//, ''));
 }
 
-// Start server
 initDatabase().then(() => {
   const port = process.env.PORT || 3000;
   http.createServer((req, res) => {
