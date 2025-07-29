@@ -212,29 +212,3 @@ initDatabase().then(() => {
   console.error('Failed to initialize database', err);
   process.exit(1);
 });
-
-
-
-// Route: POST /api/encouragements - Save encouragement message
-if (pathname === '/api/encouragements' && req.method === 'POST') {
-  const cookies = req.headers.cookie || '';
-  const userId = cookies.split(';').find(c => c.trim().startsWith('userId='))?.split('=')[1];
-  if (!userId) return sendJSON(res, 401, { error: 'Not authenticated' });
-  const { message } = await parseBody(req);
-  if (!message) return sendJSON(res, 400, { error: 'Message required' });
-  await db.collection('encouragements').insertOne({
-    userId: new ObjectId(userId),
-    message,
-    timestamp: new Date().toISOString()
-  });
-  return sendJSON(res, 200, { success: true });
-}
-
-// Route: GET /api/encouragements/random - Fetch random message
-if (pathname === '/api/encouragements/random' && req.method === 'GET') {
-  const count = await db.collection('encouragements').countDocuments();
-  if (count === 0) return sendJSON(res, 200, { message: 'ยังไม่มีข้อความกำลังใจในระบบ' });
-  const randomIndex = Math.floor(Math.random() * count);
-  const random = await db.collection('encouragements').find().skip(randomIndex).limit(1).toArray();
-  return sendJSON(res, 200, { message: random[0].message });
-}
