@@ -59,7 +59,7 @@ async function initDatabase() {
   console.log('Connected to MongoDB');
 }
 
-function sendJSON(res, statusCode, obj, origin = '*') {
+function sendJSON(res, statusCode, obj, allowedOrigin, origin = '*') {
   res.writeHead(statusCode, {
     'Content-Type': 'application/json',
     'Access-Control-Allow-Credentials': 'true',
