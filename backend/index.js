@@ -59,13 +59,15 @@ async function initDatabase() {
   console.log('Connected to MongoDB');
 }
 
-function sendJSON(res, statusCode, obj) {
+function sendJSON(res, statusCode, obj, origin = '*') {
   res.writeHead(statusCode, {
     'Content-Type': 'application/json',
-    'Access-Control-Allow-Credentials': 'true'
+    'Access-Control-Allow-Credentials': 'true',
+    'Access-Control-Allow-Origin': origin
   });
   res.end(JSON.stringify(obj));
 }
+
 
 function parseBody(req) {
   return new Promise((resolve) => {
@@ -108,16 +110,15 @@ async function handleRequest(req, res) {
   const parsed = url.parse(req.url, true);
   const pathname = parsed.pathname;
 
-  if (req.method === 'OPTIONS') {
-    res.writeHead(204, {
-      'Access-Control-Allow-Origin': req.headers.origin || '*',
-      'Access-Control-Allow-Methods': 'GET, POST, DELETE, OPTIONS',
-      'Access-Control-Allow-Headers': 'Content-Type',
-      'Access-Control-Allow-Credentials': 'true'
-    });
-    res.end();
-    return;
-  }
+  const allowedOrigin = 'https://ชื่อเว็บของคุณ.onrender.com';
+
+  res.writeHead(204, {
+    'Access-Control-Allow-Origin': allowedOrigin,
+    'Access-Control-Allow-Methods': 'GET, POST, DELETE, OPTIONS',
+    'Access-Control-Allow-Headers': 'Content-Type',
+    'Access-Control-Allow-Credentials': 'true'
+  });
+
 
   if (pathname === '/register' && req.method === 'POST') {
     const { username, password } = await parseBody(req);
