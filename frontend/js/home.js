@@ -12,6 +12,31 @@ document.addEventListener('DOMContentLoaded', () => {
     const loginTitle = document.getElementById('loginTitle');
     const userGreeting = document.getElementById('userGreeting');
 
+    document.addEventListener('DOMContentLoaded', () => {
+  const authSection = document.getElementById('authSection');
+  const loginSection = document.getElementById('loginSection');
+  const userGreeting = document.getElementById('userGreeting');
+  
+  async function checkAuth() {
+    try {
+      const res = await fetch('/api/me', { credentials: 'include' });
+      const data = await res.json();
+      if (data.user) {
+        userGreeting.textContent = `สวัสดี, ${data.user.username}`;
+        authSection.style.display = 'block';
+        loginSection.style.display = 'none';
+      } else {
+        authSection.style.display = 'none';
+        loginSection.style.display = 'block';
+      }
+    } catch (err) {
+      console.error('Auth check failed', err);
+    }
+  }
+
+  // ✅ เรียกใช้ตอนโหลดหน้า
+  checkAuth();
+
     function showAlert(msg, success = false) {
         loginAlert.textContent = msg;
         loginAlert.style.display = 'block';
