@@ -1,0 +1,84 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Whisper – Login</title>
+  <link rel="stylesheet" href="css/style.css">
+  <style>
+    /* Additional styles for the login page */
+    body {
+      min-height: 100vh;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      background: linear-gradient(to bottom right, #f7e8fc, #e0f7e5);
+      font-family: 'Kanit', sans-serif;
+    }
+    .login-container {
+      background: rgba(255,255,255,0.9);
+      padding: 2rem;
+      border-radius: 1.5rem;
+      box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+      width: 100%;
+      max-width: 400px;
+    }
+    h1 {
+      margin-bottom: 1.5rem;
+      text-align: center;
+      font-size: 1.8rem;
+      color: var(--accent-color);
+    }
+    label {
+      display: block;
+      margin-top: 0.75rem;
+      margin-bottom: 0.25rem;
+      font-weight: 600;
+    }
+    input {
+      width: 100%;
+      padding: 0.5rem 0.75rem;
+      border: 1px solid #ddd;
+      border-radius: 0.75rem;
+      margin-bottom: 0.5rem;
+    }
+    .alert {
+      display: none;
+      padding: 0.75rem;
+      border-radius: 0.75rem;
+      margin-bottom: 1rem;
+    }
+    .toggle-link {
+      color: var(--accent-color);
+      cursor: pointer;
+    }
+  </style>
+</head>
+<body>
+  <div class="login-container">
+    <h1>เข้าสู่ระบบ Whisper</h1>
+    <div id="alert" class="alert"></div>
+    <div id="authForms">
+      <div id="loginForm">
+        <h2 style="margin-bottom:0.5rem;">เข้าสู่ระบบ</h2>
+        <label for="loginUsername">ชื่อผู้ใช้</label>
+        <input type="text" id="loginUsername" placeholder="Username">
+        <label for="loginPassword">รหัสผ่าน</label>
+        <input type="password" id="loginPassword" placeholder="Password">
+        <button id="loginBtn" class="button button-primary" style="width:100%;margin-top:0.5rem;">เข้าสู่ระบบ</button>
+        <p style="margin-top:0.75rem;font-size:0.9rem;">ยังไม่มีบัญชี? <span id="showRegister" class="toggle-link">สมัครสมาชิก</span></p>
+      </div>
+      <div id="registerForm" style="display:none;">
+        <h2 style="margin-bottom:0.5rem;">สมัครสมาชิก</h2>
+        <label for="registerUsername">ชื่อผู้ใช้</label>
+        <input type="text" id="registerUsername" placeholder="Username">
+        <label for="registerPassword">รหัสผ่าน</label>
+        <input type="password" id="registerPassword" placeholder="Password">
+        <button id="registerBtn" class="button button-primary" style="width:100%;margin-top:0.5rem;">สมัครสมาชิก</button>
+        <p style="margin-top:0.75rem;font-size:0.9rem;">มีบัญชีแล้ว? <span id="showLogin" class="toggle-link">เข้าสู่ระบบ</span></p>
+      </div>
+    </div>
+  </div>
+  <script src="js/login.js"></script>
+</body>
+</html>

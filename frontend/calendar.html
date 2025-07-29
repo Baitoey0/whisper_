@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Whisper – ปฏิทิน</title>
+    <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+    <nav class="navbar">
+        <div class="logo">Whisper</div>
+        <ul class="nav-links">
+            <li><a href="index.html">🏠 หน้าหลัก</a></li>
+            <li><a href="write.html">✍️ เขียน</a></li>
+            <li><a href="journal.html">📔 ไดอารี</a></li>
+            <li><a href="calendar.html" class="active">📅 ปฏิทิน</a></li>
+            <li><a href="mood.html">📈 กราฟอารมณ์</a></li>
+            <li><a href="encourage.html">💌 กำลังใจ</a></li>
+            <li><a href="my_encouragements.html">⭐ ที่บันทึกไว้</a></li>
+        </ul>
+    </nav>
+    <main class="page-container">
+        <h2 class="gradient-text">ปฏิทินงานและกิจกรรม</h2>
+        <div id="calendar" class="calendar"></div>
+        <div style="margin-top:1.5rem;">
+            <h3 style="color:var(--accent-color);margin-bottom:0.5rem;">เพิ่มกิจกรรมใหม่</h3>
+            <label for="taskTitle">ชื่อกิจกรรม</label>
+            <input id="taskTitle" type="text" class="input-field" placeholder="เช่น ส่งรายงานสำคัญ">
+            <label for="taskDate">วันที่</label>
+            <input id="taskDate" type="date" class="input-field">
+            <label for="taskNote">โน้ต</label>
+            <textarea id="taskNote" rows="3" class="textarea-field" placeholder="บันทึกสั้น ๆ..."></textarea>
+            <button id="addTask" class="button button-primary">บันทึกกิจกรรม</button>
+        </div>
+    </main>
+    <!-- Modal for tasks -->
+    <div id="taskModal" style="display:none;position:fixed;top:0;left:0;width:100%;height:100%;background:rgba(0,0,0,0.5);align-items:center;justify-content:center;z-index:1000;">
+        <div style="background:rgba(255,255,255,0.95);padding:1rem 1.5rem;border-radius:20px;max-width:400px;width:90%;max-height:80vh;overflow-y:auto;">
+            <h3 id="modalDateTitle" style="color:var(--accent-color);margin-bottom:1rem;"></h3>
+            <ul id="modalTaskList" style="list-style:none;padding-left:0;margin-bottom:1rem;"></ul>
+            <button id="closeModal" class="button button-secondary" style="width:100%;">ปิด</button>
+        </div>
+    </div>
+    <footer style="text-align:center;padding:1rem 0;font-size:0.9rem;color:rgba(0,0,0,0.6);">
+        &copy; 2025 Whisper
+    </footer>
+    <script src="js/calendar.js"></script>
+</body>
+</html>

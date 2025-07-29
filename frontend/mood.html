@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Whisper – กราฟอารมณ์</title>
+    <link rel="stylesheet" href="css/style.css">
+    <!-- Chart.js CDN -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <!-- Chart.js emoji plugin: we'll draw emojis using plugin in mood.js -->
+</head>
+<body>
+    <nav class="navbar">
+        <div class="logo">Whisper</div>
+        <ul class="nav-links">
+            <li><a href="index.html">🏠 หน้าหลัก</a></li>
+            <li><a href="write.html">✍️ เขียน</a></li>
+            <li><a href="journal.html">📔 ไดอารี</a></li>
+            <li><a href="calendar.html">📅 ปฏิทิน</a></li>
+            <li><a href="mood.html" class="active">📈 กราฟอารมณ์</a></li>
+            <li><a href="encourage.html">💌 กำลังใจ</a></li>
+            <li><a href="my_encouragements.html">⭐ ที่บันทึกไว้</a></li>
+        </ul>
+    </nav>
+    <main class="page-container">
+        <h2 class="gradient-text">กราฟอารมณ์ของคุณ</h2>
+        <!-- Range selection buttons -->
+        <div style="display:flex;gap:1rem;margin-bottom:1rem;">
+            <button class="button button-secondary" id="range7">7 วัน</button>
+            <button class="button button-secondary" id="range30">30 วัน</button>
+            <button class="button button-secondary" id="rangeAll">ทั้งหมด</button>
+        </div>
+        <!-- Chart canvas in a fixed-height container to avoid stretching -->
+        <div style="position: relative; height: 350px; width: 100%;">
+            <canvas id="moodChart"></canvas>
+        </div>
+    </main>
+    <footer style="text-align:center;padding:1rem 0;font-size:0.9rem;color:rgba(0,0,0,0.6);">
+        &copy; 2025 Whisper
+    </footer>
+    <script src="js/mood.js"></script>
+</body>
+</html>
