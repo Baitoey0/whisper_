@@ -92,9 +92,18 @@ async function handleRequest(req, res) {
   if (pathname === '/login' && req.method === 'POST') {
     const { username, password } = await parseBody(req);
     const user = await usersCol.findOne({ username });
-    if (!user || !(await bcrypt.compare(password, user.passwordHash))) return sendJSON(res, 400, { error: 'Invalid credentials' });
-    return sendJSON(res, 200, { success: true, userId: user._id.toString(), username });
-  }
+    if (!user || !(await bcrypt.compare(password, user.passwordHash))) {
+      return sendJSON(res, 400, { error: 'Invalid credentials' });
+    }
+
+  res.writeHead(200, {
+    'Content-Type': 'application/json',
+    'Set-Cookie': `userId=${user._id.toString()}; Path=/; HttpOnly`
+  });
+  res.end(JSON.stringify({ success: true, username }));
+  return;
+}
+
 
   if (pathname === '/submit-mood' && req.method === 'POST') {
     const { userId, mood, text } = await parseBody(req);
@@ -158,6 +167,25 @@ async function handleRequest(req, res) {
     const events = await eventsCol.find({ userId: new ObjectId(userId) }).toArray();
     return sendJSON(res, 200, events.map(e => ({ id: e._id.toString(), title: e.title, date: e.date, note: e.note })));
   }
+
+  if (pathname === '/api/me' && req.method === 'GET') {
+  const cookies = req.headers.cookie || '';
+  const userId = cookies.split(';').find(c => c.trim().startsWith('userId='))?.split('=')[1];
+
+  if (userId) {
+    try {
+      const user = await usersCol.findOne({ _id: new ObjectId(userId) });
+      if (user) {
+        return sendJSON(res, 200, { user: { username: user.username, userId: user._id.toString() } });
+      }
+    } catch (err) {
+      return sendJSON(res, 400, { error: 'Invalid userId' });
+    }
+  }
+
+  return sendJSON(res, 200, { user: null });
+}
+
 
   // Default: serve frontend
   serveStatic(req, res, pathname.replace(/^\//, ''));
