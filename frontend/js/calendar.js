@@ -34,12 +34,14 @@ document.addEventListener('DOMContentLoaded', () => {
 
     async function loadTasks() {
         try {
-            const userId = localStorage.getItem('whisperUserId');
-            if (!userId) {
+            const user = await getCurrentUser();
+            if (!user) {
+                alert('กรุณาเข้าสู่ระบบก่อน');
                 tasks = [];
                 renderCalendar(currentYear, currentMonth);
                 return;
             }
+            const userId = user.userId;
             const res = await fetch(`/api/tasks?userId=${encodeURIComponent(userId)}`);
             tasks = await res.json();
             renderCalendar(currentYear, currentMonth);
