@@ -28,7 +28,7 @@ document.addEventListener('DOMContentLoaded', () => {
         // prompt the user to log in again.
         const user = await getCurrentUser();
         if (!user) { alert('กรุณาเข้าสู่ระบบ'); return; }
-        const userId = user._id;
+        const userId = user.userId;
         if (!userId) {
             alert('กรุณาเข้าสู่ระบบก่อนบันทึกอารมณ์');
             return;
