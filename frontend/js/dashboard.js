@@ -85,8 +85,16 @@ document.addEventListener('DOMContentLoaded', () => {
   /* Mood section */
   // Fetch moods and draw chart
   async function loadMoods() {
-    const res = await fetch('/api/moods');
+  
+    const resUser = await fetch('/api/me');
+    const userData = await resUser.json();
+    const userId = userData.user?.userId;
+    if (!userId) return;
+
+    const res = await fetch(`/api/moods?userId=${encodeURIComponent(userId)}`);
     if (!res.ok) return;
+
+    
     const moods = await res.json();
     // Aggregate by date (YYYY-MM-DD)
     const map = {};
