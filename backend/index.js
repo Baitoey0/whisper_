@@ -1,4 +1,3 @@
-
 const http = require('http');
 const url = require('url');
 const fs = require('fs');
@@ -43,19 +42,15 @@ function sendJson(res, statusCode, data) {
 }
 
 initDatabase().then(() => {
-  
-const server = http.createServer(async (req, res) => {
-  const parsedUrl = url.parse(req.url, true);
-  const pathname = parsedUrl.pathname;
-
-  if (req.method === 'GET' && pathname === '/') {
-    res.writeHead(200, { 'Content-Type': 'text/plain' });
-    res.end('Whisper backend is running.');
-    return;
-  }
-
+  const server = http.createServer(async (req, res) => {
     const parsedUrl = url.parse(req.url, true);
     const pathname = parsedUrl.pathname;
+
+    if (req.method === 'GET' && pathname === '/') {
+      res.writeHead(200, { 'Content-Type': 'text/plain' });
+      res.end('Whisper backend is running.');
+      return;
+    }
 
     if (pathname === '/api/daily-question' && req.method === 'GET') {
       const userId = getUserIdFromCookie(req);
