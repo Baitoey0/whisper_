@@ -1,0 +1,106 @@
+<!DOCTYPE html>
+
+<html lang="th">
+<head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Whisper – Dashboard</title>
+<link href="css/styles.css" rel="stylesheet"/>
+<!-- Chart.js -->
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+</head>
+<body>
+<div class="container">
+<h1>แผงควบคุม Whisper</h1>
+<p id="welcomeMsg"></p>
+<button class="btn-secondary" id="logoutBtn" style="float:right;">ออกจากระบบ</button>
+<!-- Tab navigation -->
+<div class="tab-nav">
+<button class="btn-secondary active" data-tab="mood">กราฟอารมณ์</button>
+<button class="btn-secondary" data-tab="calendar">ปฏิทิน</button>
+<button class="btn-secondary" data-tab="notes">โน้ต</button>
+<button class="btn-secondary" data-tab="encourage">กำลังใจ</button>
+</div>
+<!-- Mood section -->
+<div class="section active" id="section-mood">
+<h2>บันทึกอารมณ์</h2>
+<div>
+<label>เลือกอารมณ์</label>
+<select id="moodSelect">
+<option value="😊">😊 มีความสุข</option>
+<option value="😐">😐 ปกติ</option>
+<option value="😢">😢 เศร้า</option>
+<option value="😰">😰 เครียด</option>
+<option value="😠">😠 โกรธ</option>
+</select>
+<label>ข้อความ (ไม่จำเป็น)</label>
+<textarea id="moodText" placeholder="ระบายเพิ่มเติมถ้าต้องการ..." rows="3"></textarea>
+<button class="btn-primary" id="saveMoodBtn">บันทึกอารมณ์</button>
+<div class="alert" id="moodMsg"></div>
+</div>
+<div id="moodChartContainer">
+<canvas id="moodChart"></canvas>
+</div>
+</div>
+<!-- Calendar section -->
+<div class="section" id="section-calendar">
+<h2>ปฏิทิน</h2>
+<div id="calendarNav" style="display:flex;justify-content:space-between;align-items:center;margin-bottom:1rem;">
+<button class="btn-secondary" id="prevMonth">&lt;</button>
+<h3 id="calendarTitle"></h3>
+<button class="btn-secondary" id="nextMonth">&gt;</button>
+</div>
+<div class="calendar" id="calendarGrid"></div>
+<h3 style="margin-top:1rem;">เพิ่มกิจกรรม</h3>
+<label>ชื่อกิจกรรม</label>
+<input id="taskTitle" placeholder="เช่น ทำการบ้าน" type="text"/>
+<label>วันที่</label>
+<input id="taskDate" type="date"/>
+<label>หมายเหตุ (ไม่จำเป็น)</label>
+<input id="taskNote" placeholder="รายละเอียดเพิ่มเติม" type="text"/>
+<button class="btn-primary" id="saveTaskBtn">บันทึกงาน/เดดไลน์</button>
+<div class="alert" id="taskMsg"></div>
+</div>
+<!-- Notes section -->
+<div class="section" id="section-notes">
+<h2>โน้ต</h2>
+<label>เลือกอารมณ์</label>
+<select id="noteMoodSelect">
+<option value="😊">😊 มีความสุข</option>
+<option value="😐">😐 ปกติ</option>
+<option value="😢">😢 เศร้า</option>
+<option value="😰">😰 เครียด</option>
+<option value="😠">😠 โกรธ</option>
+</select>
+<label>ข้อความ</label>
+<textarea id="noteText" placeholder="เขียนโน้ต..." rows="3"></textarea>
+<button class="btn-primary" id="saveNoteBtn">บันทึกโน้ต</button>
+<div class="alert" id="noteMsg"></div>
+<h3 style="margin-top:1rem;">รายการโน้ตของคุณ</h3>
+<div id="notesList"></div>
+</div>
+<!-- Encouragement section -->
+<div class="section" id="section-encourage">
+<h2>กำลังใจ</h2>
+<label>เขียนข้อความกำลังใจ</label>
+<textarea id="encourageText" placeholder="ส่งกำลังใจให้ใครสักคน..." rows="3"></textarea>
+<button class="btn-primary" id="sendEncourageBtn">ส่งกำลังใจ</button>
+<div class="alert" id="encourageMsg"></div>
+<button class="btn-secondary" id="getRandomEncourageBtn" style="margin-top:1rem;">รับข้อความสุ่ม</button>
+<div id="randomEncourageDisplay" style="margin-top:1rem;"></div>
+<h3 style="margin-top:1rem;">ข้อความกำลังใจล่าสุด</h3>
+<div class="encouragement-list" id="encourageList"></div>
+</div>
+</div>
+<script src="js/dashboard.js"></script>
+
+<script>
+const toggleBtn = document.getElementById('toggleNavbar');
+toggleBtn.addEventListener('click', function () {
+  const navbar = document.querySelector('.navbar');
+  navbar.classList.toggle('hidden');
+  toggleBtn.textContent = navbar.classList.contains('hidden') ? '⬇️' : '⬆️';
+});
+</script>
+</body>
+</html>
