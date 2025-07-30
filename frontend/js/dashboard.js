@@ -314,7 +314,10 @@ document.addEventListener('DOMContentLoaded', () => {
 
   /* Notes section */
   async function loadNotes() {
-    const res = await fetch('/api/notes');
+    const resUser = await fetch('/api/me');
+    const userData = await resUser.json();
+    const userId = userData.user?.userId;
+    const res = await fetch(`/api/notes?userId=${encodeURIComponent(userId)}`);
     if (!res.ok) return;
     const notes = await res.json();
     notesList.innerHTML = '';
