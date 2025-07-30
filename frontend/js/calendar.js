@@ -21,6 +21,17 @@ document.addEventListener('DOMContentLoaded', () => {
     const monthNames = ['มกราคม','กุมภาพันธ์','มีนาคม','เมษายน','พฤษภาคม','มิถุนายน','กรกฎาคม','สิงหาคม','กันยายน','ตุลาคม','พฤศจิกายน','ธันวาคม'];
     const dayNames = ['อา','จ','อ','พ','พฤ','ศ','ส'];
 
+
+    async function getCurrentUser() {
+        try {
+            const res = await fetch('/api/me', { credentials: 'include' });
+            const data = await res.json();
+            return data.user;
+        } catch (err) {
+            return null;
+        }
+    }
+
     async function loadTasks() {
         try {
             const userId = localStorage.getItem('whisperUserId');
@@ -214,11 +225,15 @@ document.addEventListener('DOMContentLoaded', () => {
             alert('กรุณากรอกชื่อกิจกรรมและวันที่');
             return;
         }
-        const userId = localStorage.getItem('whisperUserId');
-        if (!userId) {
+        const user = await getCurrentUser();
+        if (!user) {
             alert('กรุณาเข้าสู่ระบบก่อน');
+            tasks = [];
+            renderCalendar(currentYear, currentMonth);
             return;
         }
+        const userId = user.userId;
+
         try {
             const body = { userId, title, date, note };
             if (editingTaskId) {
