@@ -16,6 +16,7 @@ let journalsCol;
 let eventsCol;
 let encouragementsCol;
 let savedEncouragementsCol;
+let questionAnswersCol;
 
 async function initDatabase() {
   if (!mongoUri) {
@@ -31,6 +32,7 @@ async function initDatabase() {
   eventsCol = db.collection('events');
   encouragementsCol = db.collection('encouragements');
   savedEncouragementsCol = db.collection('savedEncouragements');
+  questionAnswersCol = db.collection('questionAnswers');
   // Seed default encouragement messages if none exist.  These help
   // populate the encouragement pool for new users so that the
   // random message feature always has some entries to choose from.
@@ -287,6 +289,34 @@ async function handleRequest(req, res) {
       return sendJSON(res, 400, { error: 'Invalid id' }, allowedOrigin);
     }
   }
+  if (pathname === '/submit-daily-question' && req.method === 'POST') {
+  const { userId, question, answer } = await parseBody(req);
+  if (!userId || !question || !answer) {
+    return sendJSON(res, 400, { error: 'userId, question, and answer are required' }, allowedOrigin);
+  }
+
+  await questionAnswersCol.insertOne({
+    userId: new ObjectId(userId),
+    question,
+    answer,
+    timestamp: new Date().toISOString()
+  });
+
+  return sendJSON(res, 200, { success: true }, allowedOrigin);
+}
+  if (pathname === '/api/question-answers' && req.method === 'GET') {
+    const { userId } = parsed.query;
+    if (!userId) return sendJSON(res, 400, { error: 'userId is required' }, allowedOrigin);
+    const answers = await questionAnswersCol.find({ userId: new ObjectId(userId) }).toArray();
+    return sendJSON(res, 200, answers.map(a => ({
+      id: a._id.toString(),
+      question: a.question,
+      answer: a.answer,
+      timestamp: a.timestamp
+    })), allowedOrigin);
+  }
+
+
 
   // Default: serve frontend
   serveStatic(req, res, pathname.replace(/^\//, ''));
