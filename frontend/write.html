@@ -1,0 +1,95 @@
+<!DOCTYPE html>
+
+<html lang="th">
+<head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Whisper – เขียนระบายความรู้สึก</title>
+<link href="css/style.css" rel="stylesheet"/>
+</head>
+<body>
+
+<button id="toggleNavbar" style="
+  position: fixed;
+  top: 12px;
+  right: 16px;
+  z-index: 9999;
+  background: white;
+  border: 1px solid #ccc;
+  padding: 6px 10px;
+  border-radius: 100px;
+  font-size: 18px;
+  cursor: pointer;
+  box-shadow: 0 2px 6px rgba(0,0,0,0.1);
+">
+  ⬆️
+</button>
+<nav class="navbar">
+<div class="logo">Whisper</div>
+<ul class="nav-links">
+<li><a href="index.html">🏠 หน้าหลัก</a></li>
+<li><a class="active" href="write.html">✍️ เขียน</a></li>
+<li><a href="journal.html">📔 ไดอารี</a></li>
+<li><a href="calendar.html">📅 ปฏิทิน</a></li>
+<li><a href="mood.html">📈 กราฟอารมณ์</a></li>
+<li><a href="encourage.html">💌 กำลังใจ</a></li>
+<li><a href="my_encouragements.html">⭐ ที่บันทึกไว้</a></li>
+</ul>
+</nav>
+<main class="page-container">
+<h2 class="gradient-text">ระบายความรู้สึกของคุณ</h2>
+<!-- Quick mood picker for mood‑only entries -->
+<div class="quick-mood-container" style="margin-bottom:1rem;">
+<p style="margin-bottom:0.5rem;">บันทึกอารมณ์อย่างรวดเร็ว:</p>
+<div class="quick-mood-buttons" id="quickMoodButtons">
+  <button data-mood="🤯" type="button">🤯</button>
+  <button data-mood="🥱" type="button">🥱</button>
+  <button data-mood="🥳" type="button">🥳</button>
+  <button data-mood="😴" type="button">😴</button>
+  <button data-mood="😔" type="button">😔</button>
+  <button data-mood="😍" type="button">😍</button>
+  <button data-mood="🙂" type="button">🙂</button>
+  <button data-mood="😊" type="button">😊</button>
+  <button data-mood="😭" type="button">😭</button>
+  <button data-mood="😩" type="button">😩</button>
+</div>
+</div>
+<label for="writeMood">เลือกอารมณ์</label>
+<select class="select-field" id="writeMood">
+  <option disabled selected value="">เลือกอารมณ์…</option>
+  <option value="🤯">สับสน 🤯</option>
+  <option value="🥱">เบื่อ 🥱</option>
+  <option value="🥳">ตื่นเต้น 🥳</option>
+  <option value="😴">ง่วง 😴</option>
+  <option value="😔">นอย 😔</option>
+  <option value="😍">มีความสุขมากกก 😍</option>
+  <option value="🙂">มีความสุขนิดๆ 🙂</option>
+  <option value="😊">พอยิ้มๆ 😊</option>
+  <option value="😭">เศร้าไม่ไหวแล้ว 😭</option>
+  <option value="😩">เหนื่อย 😩</option>
+</select>
+<label for="writeText">ข้อความ (ไม่จำเป็นต้องกรอก)</label>
+<textarea class="textarea-field" id="writeText" placeholder="พิมพ์สิ่งที่คุณรู้สึกได้อย่างอิสระ หรือเลือกอารมณ์ด้านบนเพื่อบันทึกอย่างรวดเร็ว..." rows="5"></textarea>
+<button class="button button-primary" id="saveWrite" style="margin-bottom:0.5rem;">บันทึก</button>
+<div id="writeAlert" style="display:none;color:green;font-weight:600;">บันทึกสำเร็จ!</div>
+<div id="dailyQuestionBox" class="journal-entry">
+  <h3>🧠 คำถามประจำวัน</h3>
+  <p id="dailyQuestionText">กำลังโหลดคำถาม...</p>
+</div>
+<div id="feedbackBox" class="journal-entry" style="margin-top: 1rem; font-style: italic;"></div>
+</main>
+<footer style="text-align:center;padding:1rem 0;font-size:0.9rem;color:rgba(0,0,0,0.6);">
+        © 2025 Whisper
+    </footer>
+<script src="js/write.js"></script>
+
+<script>
+const toggleBtn = document.getElementById('toggleNavbar');
+toggleBtn.addEventListener('click', function () {
+  const navbar = document.querySelector('.navbar');
+  navbar.classList.toggle('hidden');
+  toggleBtn.textContent = navbar.classList.contains('hidden') ? '⬇️' : '⬆️';
+});
+</script>
+</body>
+</html>
