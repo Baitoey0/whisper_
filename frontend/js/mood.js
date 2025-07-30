@@ -40,7 +40,7 @@ document.addEventListener('DOMContentLoaded', () => {
         try {
             const user = await getCurrentUser();
         if (!user) { alert('กรุณาเข้าสู่ระบบ'); return; }
-        const userId = user._id;
+        const userId = user.userId;
             if (!userId) return;
             const res = await fetch(`/api/moods?userId=${encodeURIComponent(userId)}`);
             const data = await res.json();
