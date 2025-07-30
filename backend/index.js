@@ -46,12 +46,33 @@ initDatabase().then(() => {
     const parsedUrl = url.parse(req.url, true);
     const pathname = parsedUrl.pathname;
 
-    if (req.method === 'GET' && pathname === '/') {
-      res.writeHead(200, { 'Content-Type': 'text/plain' });
-      res.end('Whisper backend is running.');
+    // ✅ Serve static files from frontend/
+    const staticDir = path.join(__dirname, '../frontend');
+    const filePath = path.join(staticDir, pathname === '/' ? '/login.html' : pathname);
+    if (req.method === 'GET') {
+      fs.readFile(filePath, (err, data) => {
+        if (err) {
+          res.writeHead(404);
+          res.end('Not found');
+        } else {
+          const ext = path.extname(filePath).toLowerCase();
+          const contentType = {
+            '.html': 'text/html',
+            '.js': 'application/javascript',
+            '.css': 'text/css',
+            '.json': 'application/json',
+            '.png': 'image/png',
+            '.jpg': 'image/jpeg',
+            '.svg': 'image/svg+xml',
+          }[ext] || 'application/octet-stream';
+          res.writeHead(200, { 'Content-Type': contentType });
+          res.end(data);
+        }
+      });
       return;
     }
 
+    // ✅ API: Get random daily question
     if (pathname === '/api/daily-question' && req.method === 'GET') {
       const userId = getUserIdFromCookie(req);
       if (!userId) return sendJson(res, 401, { error: 'Not logged in' });
@@ -73,6 +94,7 @@ initDatabase().then(() => {
       question._id = new ObjectId().toString();
       return sendJson(res, 200, { question });
 
+    // ✅ API: Submit question answer
     } else if (pathname === '/api/submit-question-answer' && req.method === 'POST') {
       let body = '';
       req.on('data', chunk => body += chunk);
@@ -92,6 +114,7 @@ initDatabase().then(() => {
         sendJson(res, 200, { message: msg });
       });
 
+    // ✅ API: Get all answers
     } else if (pathname === '/api/my-question-answers' && req.method === 'GET') {
       const userId = getUserIdFromCookie(req);
       if (!userId) return sendJson(res, 401, { error: 'Not logged in' });
