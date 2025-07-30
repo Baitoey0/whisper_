@@ -112,12 +112,17 @@ async function handleRequest(req, res) {
 
   const allowedOrigin = 'https://whisper-1uoc.onrender.com';
 
-  res.writeHead(204, {
-    'Access-Control-Allow-Origin': allowedOrigin,
-    'Access-Control-Allow-Methods': 'GET, POST, DELETE, OPTIONS',
-    'Access-Control-Allow-Headers': 'Content-Type',
-    'Access-Control-Allow-Credentials': 'true'
-  });
+  if (req.method === 'OPTIONS') {
+    res.writeHead(204, {
+      'Access-Control-Allow-Origin': allowedOrigin,
+      'Access-Control-Allow-Methods': 'GET, POST, DELETE, OPTIONS',
+      'Access-Control-Allow-Headers': 'Content-Type',
+      'Access-Control-Allow-Credentials': 'true'
+    });
+    res.end();
+    return;
+  }
+
 
 
   if (pathname === '/register' && req.method === 'POST') {
@@ -184,7 +189,7 @@ async function handleRequest(req, res) {
   if (pathname === '/api/tasks' && req.method === 'POST') {
     const { userId, title, date, note, id } = await parseBody(req);
     if (!userId || !title || !date) return sendJSON(res, 400, { error: 'userId, title and date are required' });
-    if (id) {, allowedOrigin
+    if (id) {
       await eventsCol.updateOne({ _id: new ObjectId(id), userId: new ObjectId(userId) }, { $set: { title, date, note: note || '' } });
     } else {
       await eventsCol.insertOne({ userId: new ObjectId(userId), title, date, note: note || '' });
