@@ -300,6 +300,10 @@ h3 {
 .quick-mood-buttons {
     display: flex;
     gap: 0.5rem;
+    overflow-x: auto;
+    padding-bottom: 0.5rem;
+    scroll-snap-type: x mandatory;
+    -webkit-overflow-scrolling: touch;
 }
 
 .quick-mood-buttons button {
@@ -310,6 +314,8 @@ h3 {
     background: rgba(255, 255, 255, 0.6);
     cursor: pointer;
     transition: transform 0.2s, background 0.2s;
+    flex: 0 0 auto; /* ป้องกันบีบ */
+    scroll-snap-align: start;
 }
 
 .quick-mood-buttons button:hover {
