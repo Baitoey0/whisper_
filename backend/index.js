@@ -43,7 +43,17 @@ function sendJson(res, statusCode, data) {
 }
 
 initDatabase().then(() => {
-  const server = http.createServer(async (req, res) => {
+  
+const server = http.createServer(async (req, res) => {
+  const parsedUrl = url.parse(req.url, true);
+
+  // ✅ Add this route to respond to GET / to avoid 404 error on Render
+  if (req.method === 'GET' && parsedUrl.pathname === '/') {
+    res.writeHead(200, { 'Content-Type': 'text/plain' });
+    res.end('Whisper backend is running.');
+    return;
+  }
+
     const parsedUrl = url.parse(req.url, true);
     const pathname = parsedUrl.pathname;
 
@@ -112,3 +122,4 @@ initDatabase().then(() => {
     console.log('Server is running on port', PORT);
   });
 });
+
